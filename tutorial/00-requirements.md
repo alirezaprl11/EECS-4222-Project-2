@@ -1,4 +1,4 @@
-# 00 -- Requirements
+# Requirements
 
 ## 1. Install Go
 
@@ -17,7 +17,7 @@ Open a terminal and run:
 
 If Go is installed, you should see something similar to:
 
-    go version go1.21.0 darwin/amd64
+    go version go1.21.0 windows/amd64
 
 If you see:
 
@@ -33,11 +33,8 @@ then Go is not installed.
 
 1.  Download the latest stable version from:\
     https://go.dev/dl/
-
 2.  Choose the Windows installer (.msi file).
-
 3.  Run the installer and follow the default installation steps.
-
 4.  Restart your terminal.
 
 ------------------------------------------------------------------------
@@ -87,16 +84,35 @@ You should see the installed version.
 
 ------------------------------------------------------------------------
 
-## Step 4: Configure Go Modules
+## Step 4: Go Modules (go.mod)
 
-This project uses **Go Modules**, which are enabled by default in modern
-Go versions.
+This project uses **Go Modules**.
 
-Verify module support:
+### Check whether you are inside a Go module
+
+Run:
 
     go env GOMOD
 
-You do not need to manually configure GOPATH for this project.
+-   If it prints a path ending in `go.mod`, you are already inside a
+    module.
+-   If it prints `NUL` (Windows) or `/dev/null` (Linux/macOS), it means
+    you are **not currently in a module folder yet**. This is expected
+    if you have not created `go.mod`.
+
+### Create a module (required once per project folder)
+
+In your project folder, run:
+
+    go mod init eecs4222-job-queue
+
+Then confirm:
+
+    go env GOMOD
+
+It should now show the full path to your `go.mod` file.
+
+You do not need to manually configure `GOPATH` for this project.
 
 ------------------------------------------------------------------------
 
