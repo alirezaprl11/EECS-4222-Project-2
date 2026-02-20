@@ -101,6 +101,7 @@ time.Sleep(time.Duration(job.Duration) * time.Second)
 
     .
     ├── tutorials/
+    |   ├── 00-requirements.md
     │   ├── 01-go-basics.md
     │   ├── 02-networking.md
     │   ├── 03-concurrency.md
