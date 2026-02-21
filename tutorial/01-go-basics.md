@@ -1,17 +1,24 @@
-# 01 -- Go Basics
+# 01 - Go Basics
 
 Before building a distributed system, you must understand a few Go
 fundamentals. This tutorial introduces only the concepts needed for the
-Distributed Job Queue project.
+**Distributed Job Queue** project.
 
-Each section includes: - A short explanation - A full runnable example
-
-To run any example: 1. Copy the code into a file named `main.go` 2. Run:
-`go run main.go`
+To run any example: 
+1. Copy the code into a file named `main.go`
+2. Run: `go run main.go`
 
 ------------------------------------------------------------------------
 
-## 1) Hello World
+## 1️⃣ Hello World in Go
+
+### What this shows
+
+-   `package main` is required for executable programs
+-   `func main()` is the entry point
+-   `fmt.Println()` prints text to the terminal
+
+### ✅ Example
 
 ``` go
 package main
@@ -25,7 +32,17 @@ func main() {
 
 ------------------------------------------------------------------------
 
-## 2) Variables and Basic Types
+## 2️⃣ Variables and Basic Types
+
+Go is statically typed, but it supports concise declarations.
+
+### What this shows
+
+-   `var x type = value` (explicit declaration)
+-   `x := value` (short declaration, commonly used)
+-   Basic types like `string`, `int`, `bool`, `float64`
+
+### ✅ Example
 
 ``` go
 package main
@@ -47,7 +64,18 @@ func main() {
 
 ------------------------------------------------------------------------
 
-## 3) Structs
+## 3️⃣ Structs (Used for Jobs and Messages)
+
+In this project, you will represent **jobs** and **network messages**
+using structs.
+
+### What this shows
+
+-   Defining a struct type
+-   Creating a struct instance
+-   Accessing fields with dot notation (`job.ID`)
+
+### ✅ Example
 
 ``` go
 package main
@@ -67,18 +95,33 @@ func main() {
 
     fmt.Println("Job:", job)
     fmt.Println("Job ID:", job.ID)
-    fmt.Println("Duration:", job.Duration)
+    fmt.Println("Duration:", job.Duration, "seconds")
 }
 ```
 
 ------------------------------------------------------------------------
 
-## 4) Functions and Error Handling
+## 4️⃣ Functions and Error Handling
+
+Go functions can return **multiple values**. A common pattern is
+returning `(result, error)`.
+
+### What this shows
+
+-   Defining functions
+-   Returning errors using `fmt.Errorf`
+-   Checking and printing errors
+
+### ✅ Example
 
 ``` go
 package main
 
 import "fmt"
+
+func add(a int, b int) int {
+    return a + b
+}
 
 func divide(a int, b int) (int, error) {
     if b == 0 {
@@ -88,37 +131,68 @@ func divide(a int, b int) (int, error) {
 }
 
 func main() {
+    fmt.Println("add(2, 3) =", add(2, 3))
+
     r, err := divide(10, 2)
-    fmt.Println("Result:", r, "Error:", err)
+    fmt.Println("divide(10, 2) =", r, "err =", err)
 
     r, err = divide(10, 0)
-    fmt.Println("Result:", r, "Error:", err)
+    fmt.Println("divide(10, 0) =", r, "err =", err)
 }
 ```
 
 ------------------------------------------------------------------------
 
-## 5) Slices
+## 5️⃣ Slices (Dynamic Arrays)
+
+Slices are Go's main "list" type. They grow dynamically.
+
+### What this shows
+
+-   Creating a slice
+-   Adding items using `append`
+-   Iterating using `for ... range`
+
+### ✅ Example
 
 ``` go
 package main
 
 import "fmt"
 
-func main() {
-    jobs := []string{}
-    jobs = append(jobs, "job1")
-    jobs = append(jobs, "job2")
+type Job struct {
+    ID       string
+    Duration int
+}
 
+func main() {
+    jobs := []Job{}
+
+    jobs = append(jobs, Job{ID: "job1", Duration: 3})
+    jobs = append(jobs, Job{ID: "job2", Duration: 5})
+    jobs = append(jobs, Job{ID: "job3", Duration: 2})
+
+    fmt.Println("Jobs:")
     for i, job := range jobs {
-        fmt.Println(i, job)
+        fmt.Println(i, "->", job)
     }
 }
 ```
 
 ------------------------------------------------------------------------
 
-## 6) Maps
+## 6️⃣ Maps (Key → Value)
+
+Maps store key-value pairs. We will use maps to track job status, worker
+state, etc.
+
+### What this shows
+
+-   Creating a map using `make`
+-   Setting and reading values
+-   Checking whether a key exists
+
+### ✅ Example
 
 ``` go
 package main
@@ -126,20 +200,33 @@ package main
 import "fmt"
 
 func main() {
-    status := make(map[string]string)
-    status["job1"] = "pending"
-    status["job2"] = "running"
+    jobStatus := make(map[string]string)
 
-    fmt.Println("job1:", status["job1"])
+    jobStatus["job1"] = "pending"
+    jobStatus["job2"] = "running"
 
-    value, exists := status["job3"]
-    fmt.Println("job3 exists?", exists, "value:", value)
+    fmt.Println("job1 status:", jobStatus["job1"])
+
+    // Check if a key exists
+    status, ok := jobStatus["job3"]
+    fmt.Println("job3 exists?", ok, "value:", status)
 }
 ```
 
 ------------------------------------------------------------------------
 
-## 7) Goroutines
+## 7️⃣ Concurrency -- Goroutines
+
+A goroutine is a lightweight thread managed by Go. We use goroutines to
+handle multiple connections at once.
+
+### What this shows
+
+-   Starting a goroutine using `go`
+-   The main function continues running while the goroutine runs in the
+    background
+
+### ✅ Example
 
 ``` go
 package main
@@ -151,19 +238,34 @@ import (
 
 func main() {
     go func() {
-        fmt.Println("Worker started")
+        fmt.Println("Goroutine: worker started")
         time.Sleep(1 * time.Second)
-        fmt.Println("Worker finished")
+        fmt.Println("Goroutine: worker finished")
     }()
 
-    fmt.Println("Main continues...")
+    fmt.Println("Main: continuing execution")
     time.Sleep(2 * time.Second)
+    fmt.Println("Main: done")
 }
 ```
 
 ------------------------------------------------------------------------
 
-## 8) Mutex
+## 8️⃣ Mutex (Prevent Race Conditions)
+
+When multiple goroutines access shared data, you must protect it (for
+example, with `sync.Mutex`).
+
+### What this shows
+
+-   Multiple goroutines increment a shared counter
+-   A mutex prevents incorrect updates
+
+✅ You can detect race conditions with:
+
+    go run -race main.go
+
+### ✅ Example
 
 ``` go
 package main
@@ -176,6 +278,7 @@ import (
 func main() {
     var mu sync.Mutex
     counter := 0
+
     var wg sync.WaitGroup
 
     for i := 0; i < 5; i++ {
@@ -191,13 +294,24 @@ func main() {
     }
 
     wg.Wait()
-    fmt.Println("Final counter:", counter)
+    fmt.Println("Final counter value:", counter)
 }
 ```
 
 ------------------------------------------------------------------------
 
-## 9) Basic TCP Server (Windows-Safe Testing Instructions)
+## 9️⃣ Basic TCP Server (With Windows-Safe Testing)
+
+This is the basic pattern we will use later: a server listens, accepts
+connections, and handles each connection in a goroutine.
+
+### What this shows
+
+-   Listening on a TCP port
+-   Accepting connections
+-   Handling each connection concurrently
+
+### ✅ Example
 
 ``` go
 package main
@@ -233,34 +347,81 @@ func handleConnection(conn net.Conn) {
 
 ### How to Test on Windows
 
-1.  Start the server:
+#### Step 1 -- Start the server
 
-        go run main.go
+In Terminal 1:
+- `go run main.go`
+- You should see: `Server listening on port 8080`
 
-2.  Open a new PowerShell window and run:
+#### Step 2 -- Test the connection
 
-    ``` powershell
-    Test-NetConnection -ComputerName localhost -Port 8080
-    ```
+Open a new PowerShell window and run:
+- `Test-NetConnection -ComputerName localhost -Port 8080`
+- If you see: `TcpTestSucceeded : True` → the server is running correctly.
 
-If you see:
+#### Optional: Use Telnet to see the message
 
-    TcpTestSucceeded : True
-
-the server is running correctly.
-
-(Optional) If you want to use Telnet:
-
-Enable Telnet Client in Windows: Control Panel → Programs → Turn Windows
-features on or off → Enable "Telnet Client"
+Enable Telnet Client: Control Panel → Programs → Turn Windows features
+on or off → Enable "Telnet Client"
 
 Then run:
+- `telnet localhost 8080`
+- You should see: `Hello from server`
 
-    telnet localhost 8080
+### How to Test on Linux
+
+#### Step 1 -- Start the server
+
+- `go run main.go`
+
+#### Step 2 -- Connect using netcat (recommended)
+
+- `nc localhost 8080`
+- If netcat is not installed → `sudo apt install netcat`
+- You should see: Hello from server
+
+### Alternative -- Using Telnet
+
+- `telnet localhost 8080`
+- If telnet is not installed: `sudo apt install telnet`
+
+
+### How to Test on macOS
+
+#### Step 1 -- Start the server
+
+- `go run main.go`
+
+#### Step 2 -- Connect using netcat (recommended)
+
+- `nc localhost 8080`
+- Netcat is typically preinstalled on macOS.
+- You should see: `Hello from server`
+
+#### Alternative -- Using Telnet (if installed)
+
+- `telnet localhost 8080`
+- If telnet is missing, install it using Homebrew: `brew install telnet`
+
+### What Is Happening Internally?
+
+-   The server listens on TCP port 8080.
+-   A client (nc, telnet, or PowerShell test) opens a TCP connection.
+-   The server accepts the connection.
+-   The server writes "Hello from server".
+-   The connection closes.
 
 ------------------------------------------------------------------------
+## 🔟 JSON Encoding and Decoding
 
-## 10) JSON Encoding and Decoding
+We will send jobs and responses as JSON messages.
+
+### What this shows
+
+-   Encoding a struct to JSON with `json.Marshal`
+-   Decoding JSON back into a struct with `json.Unmarshal`
+
+### ✅ Example
 
 ``` go
 package main
@@ -276,27 +437,34 @@ type Job struct {
 }
 
 func main() {
+    // Encode
     job := Job{ID: "job1", Duration: 5}
+    data, err := json.Marshal(job)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("Encoded JSON:", string(data))
 
-    data, _ := json.Marshal(job)
-    fmt.Println("Encoded:", string(data))
-
+    // Decode
     var decoded Job
-    json.Unmarshal(data, &decoded)
-    fmt.Println("Decoded:", decoded)
+    err = json.Unmarshal(data, &decoded)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println("Decoded struct:", decoded)
 }
 ```
 
 ------------------------------------------------------------------------
 
-## What You Should Understand Before Moving On
+## ✅ What You Must Understand Before Moving On
 
--   Running Go programs
--   Structs
--   Slices and maps
--   Goroutines
--   Mutex
--   Basic TCP networking
--   JSON encoding/decoding
+Before moving to the next tutorial, make sure you can:
 
-You do NOT need advanced Go features for this project.
+-   Run Go programs
+-   Define and use structs
+-   Use slices and maps
+-   Start goroutines
+-   Use a mutex to protect shared data
+-   Understand the basic TCP server structure
+-   Encode/decode JSON
