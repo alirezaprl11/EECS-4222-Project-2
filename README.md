@@ -100,7 +100,7 @@ time.Sleep(time.Duration(job.Duration) * time.Second)
 ## 📂 Repository Structure
 
     .
-    ├── tutorials/
+    ├── tutorial/
     |   ├── 00-requirements.md
     │   ├── 01-go-basics.md
     │   ├── 02-networking.md
