@@ -1,19 +1,19 @@
-# 04 -- JSON Messaging Protocol
+# 04 - JSON Messaging Protocol
 
 In distributed systems, components must agree on a **message format**.
 
 In Project 2, all communication between:
 
--   Client ↔ Queue\
+-   Client ↔ Queue
 -   Worker ↔ Queue
 
 will use **JSON over TCP**.
 
 This document defines:
 
--   Why we use JSON\
--   Message structure\
--   Required message types\
+-   Why we use JSON
+-   Message structure
+-   Required message types
 -   Encoding and decoding in Go
 
 ------------------------------------------------------------------------
@@ -22,9 +22,9 @@ This document defines:
 
 We use JSON because:
 
--   It is human-readable\
--   It is language-independent\
--   It is easy to debug\
+-   It is human-readable
+-   It is language-independent
+-   It is easy to debug
 -   It is supported natively in Go (`encoding/json`)
 
 Example JSON message:
@@ -223,8 +223,8 @@ message. - Always handle errors.
 
 Below is a minimal runnable example that:
 
--   Accepts a JSON message\
--   Prints it\
+-   Accepts a JSON message
+-   Prints it
 -   Sends a response
 
 ------------------------------------------------------------------------
@@ -312,30 +312,30 @@ func main() {
 
 ------------------------------------------------------------------------
 
-## 11️⃣ Important Rules for This Project
+## 1️⃣1️⃣ Important Rules for This Project
 
 All messages must:
 
--   Be valid JSON\
--   Use clearly defined fields\
--   Include a `"type"` field\
--   Be encoded using `json.NewEncoder`\
+-   Be valid JSON
+-   Use clearly defined fields
+-   Include a `"type"` field
+-   Be encoded using `json.NewEncoder`
 -   Be decoded using `json.NewDecoder`
 
 Do NOT:
 
--   Send raw strings\
--   Mix string-based protocol with JSON\
+-   Send raw strings
+-   Mix string-based protocol with JSON
 -   Use inconsistent field names
 
 ------------------------------------------------------------------------
 
-## 12️⃣ Why This Matters
+## 1️⃣2️⃣ Why This Matters
 
 The JSON protocol defines the **contract** between:
 
--   Queue\
--   Workers\
+-   Queue
+-   Workers
 -   Clients
 
 If all components follow the same message format, the system will work.
