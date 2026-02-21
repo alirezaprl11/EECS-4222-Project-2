@@ -1,4 +1,4 @@
-# 05 -- System Architecture
+# 05 - System Architecture
 
 Now that you understand:
 
