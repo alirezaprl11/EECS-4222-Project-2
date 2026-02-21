@@ -1,4 +1,4 @@
-# 02 -- Networking in Go
+# 02 - Networking in Go
 
 In distributed systems, independent processes communicate over the
 network.
