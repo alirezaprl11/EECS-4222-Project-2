@@ -261,10 +261,6 @@ example, with `sync.Mutex`).
 -   Multiple goroutines increment a shared counter
 -   A mutex prevents incorrect updates
 
-✅ You can detect race conditions with:
-
-    go run -race main.go
-
 ### ✅ Example
 
 ``` go
