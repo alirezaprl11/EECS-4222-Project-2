@@ -1,4 +1,4 @@
-# 09 -- Integration and Failure Testing
+# 09 - Integration and Failure Testing
 
 This tutorial explains how to test your full system end-to-end:
 
@@ -40,7 +40,7 @@ Use three terminals (minimum):
 -   Terminal 1: Queue
 -   Terminal 2: Worker 1
 -   Terminal 3: Worker 2
--   Terminal 4 (optional): Client submissions
+-   Terminal 4: Client submissions
 
 You can run everything locally.
 
@@ -77,7 +77,7 @@ they wait/retry (depends on your implementation)
 
 ### Step 3 --- Submit Jobs
 
-Terminal 4 (or reuse one terminal):
+Terminal 4:
 
     go run client.go job1 5
     go run client.go job2 2
@@ -99,8 +99,10 @@ Submit many jobs quickly:
     go run client.go jobD 1
     go run client.go jobE 1
 
-Expected behavior: - Jobs should not be duplicated - No job should be
-lost - Queue should not crash
+Expected behavior: 
+- Jobs should not be duplicated
+- No job should be lost
+- Queue should not crash
 
 (Optional) Start 3--5 workers to increase concurrency.
 
