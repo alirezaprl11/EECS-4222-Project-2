@@ -1,22 +1,27 @@
-# 05 -- System Architecture (Student Version)
+# 05 -- System Architecture
 
 Now that you understand:
 
--   Go basics\
--   Networking\
--   Concurrency\
+-   Go basics
+-   Networking
+-   Concurrency
 -   JSON messaging
 
-we define the architecture of your Distributed Job Queue system.
+we can design the full Distributed Job Queue architecture.
 
-This document describes **what your system must do**, but it does NOT
-prescribe how to implement it internally.
+This document defines:
+
+-   System components
+-   Responsibilities
+-   Communication flow
+-   Internal state design
+-   Execution lifecycle
 
 ------------------------------------------------------------------------
 
 ## 1) High-Level Architecture
 
-Your system must consist of three components:
+The system consists of three components:
 
             +---------+
             |  Client |
@@ -28,7 +33,7 @@ Your system must consist of three components:
             +----+----+
                  ^
                  |
-          +------+------+
+          +------+------
           |             |
     +-----+-----+ +-----+-----+
     |   Worker 1 | |   Worker 2 |
@@ -40,136 +45,299 @@ Your system must consist of three components:
 
 ### Client
 
-The Client must:
+The client:
 
--   Connect to the Queue
--   Submit jobs
--   Receive confirmation
+-   Connects to the Queue
+-   Submits jobs
+-   Optionally queries job status
 
-The Client does not execute jobs.
+It does NOT:
+
+-   Execute jobs
+-   Store state
 
 ------------------------------------------------------------------------
 
-### Queue
+### Queue (Central Coordinator)
 
-The Queue is the central coordinator.
+The Queue is the core of the system.
 
 It must:
 
 -   Accept job submissions
 -   Store pending jobs
--   Assign jobs to workers
 -   Track job status
--   Detect worker failure
--   Reassign unfinished jobs
+-   Assign jobs to workers
+-   Track running jobs
+-   Detect timeouts
+-   Reassign failed jobs
 
-The Queue must handle multiple connections concurrently.
+The Queue must be concurrent-safe.
 
 ------------------------------------------------------------------------
 
 ### Worker
 
-Each Worker must:
+Each worker:
 
--   Connect to the Queue
--   Request a job
--   Execute the job (simulate using sleep)
--   Notify the Queue when finished
+-   Connects to the Queue
+-   Requests a job
+-   Executes it (simulate with sleep)
+-   Reports completion
 
-Workers do not communicate with each other.
-
-------------------------------------------------------------------------
-
-## 3) Required System Behavior
-
-Your system must support:
-
-### Job Submission
-
--   Multiple jobs can be submitted.
--   Jobs must be stored until executed.
-
-### Job Assignment
-
--   Workers request jobs.
--   Jobs must be assigned fairly (first-come-first-serve).
-
-### Job Completion
-
--   Workers must report completion.
--   Completed jobs must not be reassigned.
-
-### Failure Handling
-
--   If a worker fails while executing a job, the job must eventually be
-    reassigned.
-
-You must design how failure is detected.
+Workers do NOT communicate with each other.
 
 ------------------------------------------------------------------------
 
-## 4) Concurrency Requirements
+## 3) Communication Flow
+
+### Step 1: Client Submits Job
+
+Client → Queue:
+
+``` json
+{
+  "type": "submit_job",
+  "job_id": "job1",
+  "duration": 5
+}
+```
+
+Queue:
+
+-   Stores job in pending list
+-   Responds with confirmation
+
+------------------------------------------------------------------------
+
+### Step 2: Worker Requests Job
+
+Worker → Queue:
+
+``` json
+{
+  "type": "request_job",
+  "worker_id": "worker1"
+}
+```
+
+Queue:
+
+-   If job available → assign
+-   If none → return "no_job"
+
+------------------------------------------------------------------------
+
+### Step 3: Worker Executes Job
+
+Worker:
+
+-   Sleeps for duration seconds
+-   Sends completion message
+
+------------------------------------------------------------------------
+
+### Step 4: Worker Reports Completion
+
+Worker → Queue:
+
+``` json
+{
+  "type": "job_complete",
+  "job_id": "job1",
+  "worker_id": "worker1"
+}
+```
+
+Queue:
+
+-   Marks job as completed
+
+------------------------------------------------------------------------
+
+## 4) Internal Queue State Design
+
+The Queue must track:
+
+-   Pending jobs
+-   Running jobs
+-   Completed jobs
+-   Worker assignments
+
+Example internal structure:
+
+``` go
+type Job struct {
+    ID       string
+    Duration int
+}
+
+type Queue struct {
+    pendingJobs   []Job
+    runningJobs   map[string]string // jobID → workerID
+    completedJobs map[string]bool
+    mu            sync.Mutex
+}
+```
+
+------------------------------------------------------------------------
+
+## 5) Concurrency Model
 
 The Queue must:
 
--   Handle multiple client connections
--   Handle multiple worker connections
--   Protect shared data structures
--   Avoid race conditions
+-   Handle multiple clients
+-   Handle multiple workers
+-   Protect shared state
+
+Pattern:
+
+Accept connection\
+→ Start goroutine\
+→ Decode message\
+→ Lock queue state\
+→ Modify state\
+→ Unlock\
+→ Send response
+
+Every connection handler must run in its own goroutine.
 
 ------------------------------------------------------------------------
 
-## 5) Architectural Constraints
+## 6) Failure Handling (Simplified Model)
+
+In this project, we assume:
+
+-   Workers may crash
+-   Connections may drop
+
+We do NOT implement:
+
+-   Network partitions
+-   Consensus protocols
+-   Persistent storage
+
+### Timeout Model
+
+Queue must detect if:
+
+-   A job is assigned
+-   Worker never reports completion
+
+Solution:
+
+-   Store timestamp when job assigned
+-   Periodically check running jobs
+-   If timeout exceeded → requeue job
+
+Example:
+
+``` go
+type RunningJob struct {
+    WorkerID  string
+    StartTime time.Time
+}
+```
+
+------------------------------------------------------------------------
+
+## 7) Execution Lifecycle Example
+
+Let's walk through a complete lifecycle:
+
+1.  Client submits 3 jobs.
+2.  Queue stores them in pending list.
+3.  Worker 1 requests job → gets Job A.
+4.  Worker 2 requests job → gets Job B.
+5.  Worker 1 completes Job A.
+6.  Queue marks Job A completed.
+7.  Worker 1 requests next job → gets Job C.
+8.  Worker 2 crashes before finishing Job B.
+9.  Timeout triggers → Job B returned to pending list.
+10. Worker 1 eventually picks Job B.
+
+This is real distributed behavior.
+
+------------------------------------------------------------------------
+
+## 8) Thread-Safety Requirements
+
+You must protect:
+
+-   pendingJobs
+-   runningJobs
+-   completedJobs
+
+Never modify shared maps or slices without locking:
+
+``` go
+q.mu.Lock()
+...
+q.mu.Unlock()
+```
+
+Better pattern:
+
+``` go
+q.mu.Lock()
+defer q.mu.Unlock()
+```
+
+------------------------------------------------------------------------
+
+## 9) What We Are NOT Building
+
+To keep project scope reasonable, we are NOT building:
+
+-   Distributed consensus (Raft)
+-   Multi-leader system
+-   Persistent storage
+-   Database-backed queue
+-   Worker-to-worker communication
+-   Load balancing strategies
+
+We are building:
+
+A single central queue with multiple concurrent workers.
+
+------------------------------------------------------------------------
+
+## 10) Architectural Constraints
 
 You must:
 
 -   Use TCP sockets
 -   Use JSON messaging
--   Use goroutines
--   Use synchronization primitives (`sync.Mutex`, etc.)
--   Keep all data in memory
+-   Use goroutines for concurrency
+-   Protect shared state with mutex
+-   Reassign timed-out jobs
 
 You must NOT:
 
+-   Use external frameworks
 -   Use databases
--   Use HTTP frameworks
--   Use external libraries
 -   Use third-party message brokers
+-   Use HTTP libraries
 
 ------------------------------------------------------------------------
 
-## 6) Design Decisions (You Must Decide)
-
-You must design:
-
--   How jobs are stored internally
--   How running jobs are tracked
--   How worker failure is detected
--   How timeouts are implemented
--   How job state transitions are handled
-
-Your design must be explained in your report.
-
-------------------------------------------------------------------------
-
-## 7) Expected Runtime Behavior
+## 11) Final System Behavior
 
 At runtime, the system should:
 
--   Accept multiple job submissions
--   Allow multiple workers
--   Reassign jobs if a worker crashes
+-   Accept unlimited job submissions
+-   Support multiple workers
+-   Assign jobs fairly (first-come-first-serve)
+-   Handle worker failure
 -   Maintain consistent job state
 
 ------------------------------------------------------------------------
 
-## 8) What You Will Implement Next
+## 12) What Comes Next
 
-In the next tutorial, you will begin implementing:
+In the next tutorial, we will implement:
 
 -   The Queue server
 -   Its internal state
--   Connection handlers
+-   Connection handling
 -   Job assignment logic
-
-This is where your design decisions become code.
