@@ -1,4 +1,4 @@
-# 06 -- Queue Server Implementation
+# 06 - Queue Server Implementation
 
 In this tutorial, you will begin implementing the core component of the
 system:\
