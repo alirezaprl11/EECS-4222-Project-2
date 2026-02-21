@@ -1,4 +1,4 @@
-# 10 -- Project Evaluation and Submission Guidelines
+# 10 - Project Evaluation and Submission Guidelines
 
 This document explains:
 
@@ -7,197 +7,199 @@ This document explains:
 -   What your demo video must show
 -   How grading will be performed
 
-Please read this carefully to avoid losing marks due to incomplete
-submission.
+Please read carefully. Missing required components will result in grade
+deductions.
 
 ------------------------------------------------------------------------
 
 # 1) Required Deliverables
 
-You must submit **ONE ZIP file** on eClass containing:
+You must submit **ONE ZIP file on eClass**.
+
+Your ZIP file must include:
 
 1.  All source code (Queue, Worker, Client)
 2.  Your written report (PDF format)
-3.  Any additional scripts used for testing (if applicable)
+3.  The demo video file (maximum 10 minutes)
+4.  Any helper/testing scripts (if applicable)
 
-In addition, you must upload a **demo video (max 10 minutes)** as
-instructed on eClass.
-
-If you have questions, post them on the **eClass discussion forum**. Do
-not email questions individually unless necessary.
+All required components must be inside a single ZIP file.
 
 ------------------------------------------------------------------------
 
-# 2) Written Report Requirements
+# 2) Demo Video Requirement 
 
-There is **no strict page limit**.\
-Write clearly and concisely. Quality matters more than length.
+You must include a demo video file inside your ZIP submission.
+
+-   Maximum length: 10 minutes
+-   The video does NOT need to be 10 minutes
+-   Shorter and clear explanations are encouraged
+
+Important:
+
+Even though the video is worth 10 points, **if the video is missing from
+the ZIP file, your project will not be marked**
+
+------------------------------------------------------------------------
+
+# 3) Written Report Requirements
+
+There is no strict page limit, but the report must be clear, structured,
+and technically detailed.
 
 Your report must include the following sections:
 
 ------------------------------------------------------------------------
 
-## 2.1 System Overview
+## 3.1 System Overview
 
--   Brief description of your architecture
--   Explanation of each component (Queue, Worker, Client)
--   A simple diagram of your system (can be hand-drawn or digital)
-
+-   Description of overall architecture
+-   Explanation of Queue, Worker, and Client roles
+-   
 ------------------------------------------------------------------------
 
-## 2.2 Design Decisions
+## 3.2 Design Decisions
 
-You must clearly explain:
+Clearly explain:
 
--   How you store pending jobs
--   How you track running jobs
--   How you track completed jobs
--   How job state transitions are handled
--   How worker failure is detected
--   How timeout logic works
+-   How pending jobs are stored
+-   How running jobs are tracked
+-   How completed jobs are recorded
+-   How job state transitions occur
 -   Why you chose your data structures
 
-Be specific. Do not just say "we used a map."\
-Explain why.
+Avoid vague statements. Justify your decisions.
 
 ------------------------------------------------------------------------
 
-## 2.3 Concurrency Handling
+## 3.3 Concurrency Handling
 
-You must explain:
+Explain:
 
--   How you prevent race conditions
--   Where and why you use mutex locks
--   How goroutines are used
--   How you ensure thread safety
-
-If applicable, mention whether you tested using:
-
-    go run -race
+-   How shared state is protected
+-   Where and why mutex is used
+-   How goroutines are structured
+-   How you avoided race conditions
 
 ------------------------------------------------------------------------
 
-## 2.4 Failure Handling Strategy
+## 3.4 Failure Handling Strategy
 
 Explain:
 
 -   What happens when a worker crashes
--   How long your timeout is
--   How frequently you check for timeouts
+-   How timeouts are implemented
+-   How often timeouts are checked
 -   How jobs are reassigned
--   Why your strategy works
+-   Why your approach works
 
 ------------------------------------------------------------------------
 
-## 2.5 Testing Methodology
+## 3.5 Testing Methodology
 
 Describe:
 
 -   How you tested integration
 -   How you tested worker crashes
--   What logs or evidence show correctness
--   Any issues you encountered and how you fixed them
+-   What evidence shows correctness
+-   Issues encountered and how you fixed them
 
-Screenshots of logs are encouraged.
+**Screenshots of logs are recommended.**
 
 ------------------------------------------------------------------------
 
-## 2.6 Limitations
+## 3.6 Limitations
 
-Discuss:
+Briefly discuss:
 
 -   What your system does NOT handle
 -   Known edge cases
 -   Possible improvements
 
-This section shows understanding of distributed systems trade-offs.
-
 ------------------------------------------------------------------------
 
-# 3) Demo Video Requirements (Max 10 Minutes)
+# 4) Demo Video Content Requirements
 
-You must record a video that includes:
+Your video must include:
 
--   Your face visible (camera on)
--   Screen recording of your system running
--   Explanation of your design
+-   Your face visible on camera
+-   Screen recording of the system running
+-   Explanation of your architecture and design decisions
 
-The video does NOT need to be 10 minutes.\
-Keep it concise but complete.
-
-------------------------------------------------------------------------
-
-## Your video must demonstrate:
+The video must demonstrate:
 
 1.  Starting the Queue server
 2.  Starting at least two Workers
 3.  Submitting multiple jobs
 4.  Showing job distribution
-5.  Killing one worker mid-execution
+5.  Killing one worker during execution
 6.  Showing job reassignment after timeout
-7.  Explaining how your design works internally
+7.  Explaining how your design works
 
-You must explain:
-
--   Your data structures
--   Your timeout logic
--   Your concurrency model
-
-Do not simply run commands silently.
+Do not simply run commands without explanation.
 
 ------------------------------------------------------------------------
 
-# 4) Grading Criteria
+# 5) Grading Scheme (100 Points)
 
-Your grade will be based on:
+## 1) System Functionality -- 40 Points
 
-### Correctness
-
--   Jobs are assigned correctly
+-   Jobs can be submitted and stored correctly
+-   Workers receive and execute jobs
+-   Multiple workers operate concurrently
 -   Completed jobs are not reassigned
--   No job is lost
-
-### Concurrency Safety
-
--   No race conditions
--   Proper mutex usage
-
-### Failure Handling
-
--   Worker crash leads to reassignment
--   Timeout logic works properly
-
-### Code Quality
-
--   Clean structure
--   Logical organization
--   Proper error handling
-
-### Report Quality
-
--   Clear explanations
--   Technical understanding
--   Justification of design decisions
-
-### Video Clarity
-
--   Clear explanation
--   Demonstrated functionality
--   Professional presentation
+-   System runs without crashing
 
 ------------------------------------------------------------------------
 
-# 5) Submission Instructions
+## 2) Concurrency & Failure Handling -- 30 Points
+
+-   Proper synchronization (no race conditions)
+-   Safe handling of shared state
+-   Worker crash does not lose jobs
+-   Timeout and reassignment work correctly
+
+------------------------------------------------------------------------
+
+## 3) Code Quality & Design -- 10 Points
+
+-   Clear structure (Queue / Worker / Client separation)
+-   Logical organization
+-   Basic error handling
+
+------------------------------------------------------------------------
+
+## 4) Written Report -- 10 Points
+
+-   Clear explanation of architecture
+-   Explanation of concurrency handling
+-   Explanation of failure strategy
+-   Discussion of limitations
+
+------------------------------------------------------------------------
+
+## 5) Demo Video -- 10 Points
+
+-   Working demonstration
+-   Worker crash shown
+-   Clear explanation of design decisions
+
+If the video file is missing from the ZIP submission, you will receive
+0/10 for this section.
+
+------------------------------------------------------------------------
+
+# 6) Submission Instructions
 
 -   Compress all required files into ONE ZIP file
--   Upload ZIP to eClass before deadline
--   Upload demo video as instructed on eClass
+-   Ensure the video file is included inside the ZIP
+-   Upload the ZIP file to eClass before the deadline
 
 Late submissions follow course policy.
 
 ------------------------------------------------------------------------
 
-# 6) Questions
+# 7) Questions
 
 If you have questions:
 
@@ -205,17 +207,15 @@ If you have questions:
 -   Check existing posts before asking
 -   Do not wait until the last day
 
-Clear communication is part of professional software development.
-
 ------------------------------------------------------------------------
 
 # Final Reminder
 
-This project is designed to test:
+This project evaluates:
 
 -   Your understanding of distributed systems
 -   Your concurrency skills in Go
 -   Your ability to design reliable systems
--   Your ability to explain your technical decisions clearly
+-   Your ability to clearly explain technical decisions
 
-Good luck.
+Plan early and test thoroughly.
