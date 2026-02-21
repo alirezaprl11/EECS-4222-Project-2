@@ -109,13 +109,10 @@ time.Sleep(time.Duration(job.Duration) * time.Second)
     │   ├── 05-system-architecture.md
     │   ├── 06-queue-server.md
     │   ├── 07-worker.md
-    │   ├── 08-failure-handling.md
-    │   ├── 09-testing.md
+    │   ├── 08-client.md
+    │   ├── 09-integration-failure-testing.md
     │   └── 10-evaluation.md
     │
-    ├── queue/
-    ├── worker/
-    ├── client/
     └── README.md
 
 You must follow the tutorials in order.
@@ -132,45 +129,6 @@ You must follow the tutorials in order.
 -   No external frameworks allowed
 
 You may use only Go's standard library.
-
-------------------------------------------------------------------------
-
-## 🚫 Not Required
-
--   No Kubernetes
--   No Docker
--   No databases
--   No Raft or Paxos
--   No persistent storage
--   No cloud services
-
-This project focuses on distributed coordination logic, not
-infrastructure.
-
-------------------------------------------------------------------------
-
-## 🧪 Example Execution
-
-Open three terminals.
-
-Start the queue:
-
-    go run queue/main.go
-
-Start workers:
-
-    go run worker/main.go
-
-Submit a job:
-
-    go run client/main.go
-
-You should observe:
-
--   Worker receives job
--   Worker executes job
--   Queue updates job status
--   If worker crashes, job is reassigned
 
 ------------------------------------------------------------------------
 
