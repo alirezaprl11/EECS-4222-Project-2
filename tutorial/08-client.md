@@ -1,4 +1,4 @@
-# 08 -- Client Implementation
+# 08 - Client Implementation
 
 In this tutorial, you will implement the **Client** component.
 
@@ -177,8 +177,7 @@ Submit multiple jobs:
 ## 7) Optional Extension: Batch Submission
 
 For extra testing, you may extend the client to submit multiple jobs in
-a loop (e.g., from a file). This is not required unless specified in
-evaluation.
+a loop (e.g., from a file). This is not required. 
 
 ------------------------------------------------------------------------
 
