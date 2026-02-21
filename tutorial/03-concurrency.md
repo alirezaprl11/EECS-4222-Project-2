@@ -1,4 +1,4 @@
-# 03 -- Concurrency in Go
+# 03 - Concurrency in Go
 
 Distributed systems are inherently concurrent.
 
@@ -103,10 +103,6 @@ func main() {
     fmt.Println("Counter:", counter)
 }
 ```
-
-To detect race conditions:
-
-    go run -race main.go
 
 ------------------------------------------------------------------------
 
