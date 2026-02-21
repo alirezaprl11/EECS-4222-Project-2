@@ -183,10 +183,7 @@ Do not simply run commands without explanation.
 -   Working demonstration
 -   Worker crash shown
 -   Clear explanation of design decisions
-
-If the video file is missing from the ZIP submission, you will receive
-0/10 for this section.
-
+  
 ------------------------------------------------------------------------
 
 # 6) Submission Instructions
