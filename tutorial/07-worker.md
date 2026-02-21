@@ -1,4 +1,4 @@
-# 07 -- Worker Implementation
+# 07 - Worker Implementation
 
 In this tutorial, you will implement the **Worker** component.
 
