@@ -355,14 +355,6 @@ Open a new PowerShell window and run:
 - `Test-NetConnection -ComputerName localhost -Port 8080`
 - If you see: `TcpTestSucceeded : True` → the server is running correctly.
 
-#### Optional: Use Telnet to see the message
-
-Enable Telnet Client: Control Panel → Programs → Turn Windows features
-on or off → Enable "Telnet Client"
-
-Then run:
-- `telnet localhost 8080`
-- You should see: `Hello from server`
 
 ### How to Test on Linux
 
