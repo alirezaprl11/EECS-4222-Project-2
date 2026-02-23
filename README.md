@@ -112,7 +112,7 @@ time.Sleep(time.Duration(job.Duration) * time.Second)
     │
     └── README.md
 
-You must follow the tutorials in order.
+You must **follow the tutorials in order** to finish the project. 
 
 ------------------------------------------------------------------------
 
